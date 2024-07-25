@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>HOME</h1>
+    <a href="/users/register">REGISTER</a>
+    <a href="/users/login">LOGIN</a>
+    <h1>Mark Attendance</h1>
+    <form id="attendanceForm" method="POST" action="/mark-attendance">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required /><br /><br />
+      <label for="rollNumber">Roll Number:</label>
+      <input
+        type="text"
+        id="rollNumber"
+        name="rollNumber"
+        required
+      /><br /><br />
+      <input type="hidden" id="lat" name="lat" />
+      <input type="hidden" id="lon" name="lon" />
+      <button type="submit">Mark Attendance</button>
+    </form>
+  </body>
+  <script>
+    document
+      .getElementById("attendanceForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            document.getElementById("lat").value = position.coords.latitude;
+            document.getElementById("lon").value = position.coords.longitude;
+            this.submit();
+          },
+          (error) => {
+            alert("Failed to get location. Please enable location services.");
+          }
+        );
+      });
+  </script>
+</html>
