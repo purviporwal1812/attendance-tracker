@@ -33,8 +33,20 @@ app.use(
 app.use(passport.initialize());
 // Store our variables to be persisted across the whole session. Works with app.use(Session) above
 app.use(passport.session());
-app.use(flash());
 
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect("/users/dashboard");
+  }
+  next();
+}
+
+function checkNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/users/login");
+}
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -48,12 +60,11 @@ app.get("/users/login", checkAuthenticated, (req, res) => {
 });
 
 app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
-  console.log(req.isAuthenticated());
   res.render("dashboard.ejs", { user: req.user.name });
 });
 
 app.get("/users/logout", (req, res) => {
-  res.render("index.ejs", { message: "You have logged out successfully" });
+  res.render("index.ejs");
 });
 
 app.post("/users/register", async (req, res) => {
@@ -110,8 +121,7 @@ app.post("/users/register", async (req, res) => {
               if (err) {
                 throw err;
               }
-              console.log(results.rows);
-              req.flash("success_msg", "You are now registered. Please log in");
+
               res.redirect("/users/login");
             }
           );
@@ -140,11 +150,10 @@ app.post("/mark-attendance", (req, res) => {
   ) {
     try {
       const insertAttendance = pool.query(
-        `INSERT INTO attendance (name, rollNumber, latitude, longitude) VALUES ($1, $2, $3, $4) RETURNING *`,
+        `INSERT INTO attendance (name, rollNumber, latitude, longitude) VALUES ($1, $2, $3, $4)`,
         [name, rollNumber, latitude, longitude]
       );
-      console.log("Attendance marked for", name);
-      res.send("Attendance marked successfully.");
+      res.send(`Attendance marked successfully for : ${name}`);
     } catch (err) {
       console.error("Error marking attendance", err.stack);
       res.status(500).send("Failed to mark attendance. Please try again.");
@@ -159,23 +168,8 @@ app.post(
   passport.authenticate("local", {
     successRedirect: "/users/dashboard",
     failureRedirect: "/users/login",
-    failureFlash: true,
   })
 );
-
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect("/users/dashboard");
-  }
-  next();
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/users/login");
-}
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
