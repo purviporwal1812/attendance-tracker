@@ -1,72 +1,53 @@
 const express = require("express");
-const { pool } = require("./dbconfig");
+const { Pool } = require("pg");
 const passport = require("passport");
 const session = require("express-session");
 const rateLimit = require("express-rate-limit");
-
+const cors = require("cors");
 require("dotenv").config();
+
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
+// Initialize PostgreSQL connection
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+});
+
+// Initialize Passport
 const initializePassport = require("./passportConfig");
-
 initializePassport(passport);
 
 // Middleware
-
-// Parses details from a form
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.urlencoded({ extended: false }));
-app.set("view engine", "ejs");
+app.use(express.json()); // Add this to handle JSON requests
 
 app.use(
   session({
-    // Key we want to keep secret which will encrypt all of our information
     secret: process.env.SESSION_SECRET,
-    // Should we resave our session variables if nothing has changes which we dont
     resave: false,
-    // Save empty value if there is no vaue which we do not want to do
     saveUninitialized: false,
   })
 );
-// Funtion inside passport which initializes passport
+
 app.use(passport.initialize());
-// Store our variables to be persisted across the whole session. Works with app.use(Session) above
 app.use(passport.session());
 
+// Rate limiter
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour in milliseconds
-  max: 1, // Limit each user to 1 request per windowMs
+  max: 1, // Limit each IP to 1 request per windowMs
   message: "You have already marked your attendance for this hour.",
-});
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect("/users/dashboard");
-  }
-  next();
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/users/login");
-}
-
-app.get("/", (req, res) => {
-  res.render("index");
-});
-
-app.get("/users/login", checkAuthenticated, (req, res) => {
-  res.render("login.ejs");
-});
-
-app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
-  res.render("dashboard.ejs", { user: req.user.name });
-});
-
-app.get("/users/logout", (req, res) => {
-  req.logout();
-  res.redirect("/");
 });
 
 const roomBounds = {
@@ -75,7 +56,30 @@ const roomBounds = {
   minLon: 74.84089,
   maxLon: 78.837,
 };
-app.post("/mark-attendance", limiter, (req, res) => {
+
+// Routes
+app.get("/", (req, res) => {
+  res.send("Backend running");
+});
+
+app.get("/users/login", (req, res) => {
+  res.send("Login Page"); // Serve login page or use API
+});
+
+app.get("/users/dashboard", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.send(`Dashboard for: ${req.user.name}`);
+  } else {
+    res.redirect("/users/login");
+  }
+});
+
+app.get("/users/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
+
+app.post("/mark-attendance", limiter, async (req, res) => {
   const { name, rollNumber, lat, lon } = req.body;
 
   const latitude = parseFloat(lat);
@@ -88,7 +92,7 @@ app.post("/mark-attendance", limiter, (req, res) => {
     longitude <= roomBounds.maxLon
   ) {
     try {
-      const insertAttendance = pool.query(
+      await pool.query(
         `INSERT INTO attendance (name, rollNumber, latitude, longitude) VALUES ($1, $2, $3, $4)`,
         [name, rollNumber, latitude, longitude]
       );
