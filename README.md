@@ -35,4 +35,4 @@ used for authentication and maintaining sessions , using app.use(passport.initia
 
 - [Connection Pooling in Postgres](https://www.ashnik.com/everything-you-need-to-know-about-connection-pooling-in-postgres/#:~:text=5%20MIN%20READ,new%20connection%20to%20the%20database.) - This article tells on how PostgreSQL creates a connection pool to cache and reuse database connections, reducing the overhead of establishing new connections.Pool maintains a set of open connections that can be reused.
 - [Middleware Functions](https://expressjs.com/en/guide/using-middleware.html.).- `app.use()` to add a middleware function to our Express.Express executes middleware in the order they are added.Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle.
--
+- [Express Sessions](https://www.npmjs.com/package/express-session.).- Express sessions manage user state by storing session data on the server and using a session ID cookie to track user interactions across requests. Sessions are Stateful and uses "Secret" for encryption.
