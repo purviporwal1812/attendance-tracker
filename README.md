@@ -37,6 +37,5 @@ used for authentication and maintaining sessions , using app.use(passport.initia
 - [Middleware Functions](https://expressjs.com/en/guide/using-middleware.html.).- `app.use()` to add a middleware function to our Express.Express executes middleware in the order they are added.Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle.
 - [Express Sessions](https://www.npmjs.com/package/express-session.).- Express sessions manage user state by storing session data on the server and using a session ID cookie to track user interactions across requests. Sessions are Stateful and uses "Secret" for encryption.
 
-
-![Flow](client/public/Flow Diagram.drawio.png)
+[Flow](https://github.com/purviporwal1812/skill-development-project-sem5/blob/main/client/public/Flow%20Diagram.drawio.png)
 
