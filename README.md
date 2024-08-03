@@ -9,16 +9,6 @@ minimalist web framework for Node.js.
 **pg** : `npm i pg`
 postgresql for node.js
 
-**ejs** : `npm i ejs`
-embedded js
-looks into the ‘views’ folder for the templates to render
-
-```
-app.get('/', (req, res) => {
-	res.render('home');
-});
-```
-
 for dynamic content , render method can take object as second parameter
 
 **dotenv** : `npm i dotenv`
