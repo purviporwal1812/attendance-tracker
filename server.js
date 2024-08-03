@@ -30,7 +30,7 @@ app.use(
   })
 );
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json()); // Add this to handle JSON requests
+app.use(express.json()); 
 
 app.use(
   session({
@@ -45,8 +45,8 @@ app.use(passport.session());
 
 // Rate limiter
 const limiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour in milliseconds
-  max: 1, // Limit each IP to 1 request per windowMs
+  windowMs: 60 * 60 * 1000, 
+  max: 1, 
   message: "You have already marked your attendance for this hour.",
 });
 
@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/users/login", (req, res) => {
-  res.send("Login Page"); // Serve login page or use API
+  res.send("Login Page"); 
 });
 
 app.get("/users/dashboard", (req, res) => {

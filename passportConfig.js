@@ -1,5 +1,12 @@
 const LocalStrategy = require("passport-local").Strategy;
-const { pool } = require("./dbconfig");
+const { Pool } = require("pg");
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+});
 
 function initialize(passport) {
   passport.use(
@@ -16,7 +23,6 @@ function initialize(passport) {
 
         const user = results.rows[0];
         if (user.password === password) {
-          // Compare plain text passwords
           return done(null, user);
         } else {
           return done(null, false, { message: "Password incorrect" });
