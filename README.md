@@ -1,3 +1,5 @@
+The application ensures students can mark their attendance only once per hour within specific room coordinates set by the admin, preventing proxy attendance and ensuring accurate records.
+
 ### Dependencies
 
 **nodemon** : `npm i -D nodemon`
