@@ -4,8 +4,6 @@ import axios from "axios";
 function MarkAttendance() {
   const [name, setName] = useState("");
   const [rollNumber, setRollNumber] = useState("");
-  const [lat, setLat] = useState("");
-  const [lon, setLon] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -13,8 +11,8 @@ function MarkAttendance() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          setLat(position.coords.latitude);
-          setLon(position.coords.longitude);
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
 
           try {
             const response = await axios.post(
@@ -22,8 +20,8 @@ function MarkAttendance() {
               {
                 name,
                 rollNumber,
-                lat: position.coords.latitude,
-                lon: position.coords.longitude,
+                lat,
+                lon,
               },
               {
                 withCredentials: true,
@@ -73,8 +71,6 @@ function MarkAttendance() {
         />
         <br />
         <br />
-        <input type="hidden" id="lat" name="lat" value={lat} />
-        <input type="hidden" id="lon" name="lon" value={lon} />
         <button type="submit">Mark Attendance</button>
       </form>
     </div>
