@@ -3,31 +3,57 @@ import axios from "axios";
 
 function Dashboard() {
   const [rooms, setRooms] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState("");
+  const [newRoom, setNewRoom] = useState({
+    name: "",
+    minlat: "",
+    maxlat: "",
+    minlon: "",
+    maxlon: "",
+  });
 
   useEffect(() => {
-
-    const fetchRooms = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/admin/rooms");
-        setRooms(response.data);
-      } catch (error) {
-        console.error("Error fetching rooms", error);
-      }
-    };
-
     fetchRooms();
   }, []);
+
+  const fetchRooms = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/admin/dashboard");
+      setRooms(response.data);
+    } catch (error) {
+      console.error("Error fetching rooms", error);
+    }
+  };
+
+  const handleAddRoom = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/admin/dashboard", newRoom);
+      setRooms([...rooms, response.data]); 
+      setNewRoom({
+        name: "",
+        minlat: "",
+        maxlat: "",
+        minlon: "",
+        maxlon: "",
+      }); 
+      alert("Room added successfully");
+    } catch (error) {
+      console.error("Error adding room", error);
+    }
+  };
 
   const handleRoomSelection = async (roomId) => {
     try {
       await axios.post("http://localhost:5000/admin/select-room", { roomId });
-      setSelectedRoom(roomId);
-      console.log(roomId)
+      fetchRooms(); 
       alert("Room selected successfully");
     } catch (error) {
       console.error("Error selecting room", error);
     }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewRoom({ ...newRoom, [name]: value });
   };
 
   return (
@@ -44,6 +70,46 @@ function Dashboard() {
           </li>
         ))}
       </ul>
+
+      <h2>Add Room</h2>
+      <div>
+        <input
+          type="text"
+          name="name"
+          placeholder="Room Name"
+          value={newRoom.name}
+          onChange={handleInputChange}
+        />
+        <input
+          type="number"
+          name="minlat"
+          placeholder="Min Latitude"
+          value={newRoom.minlat}
+          onChange={handleInputChange}
+        />
+        <input
+          type="number"
+          name="maxlat"
+          placeholder="Max Latitude"
+          value={newRoom.maxlat}
+          onChange={handleInputChange}
+        />
+        <input
+          type="number"
+          name="minlon"
+          placeholder="Min Longitude"
+          value={newRoom.minlon}
+          onChange={handleInputChange}
+        />
+        <input
+          type="number"
+          name="maxlon"
+          placeholder="Max Longitude"
+          value={newRoom.maxlon}
+          onChange={handleInputChange}
+        />
+        <button onClick={handleAddRoom}>Add Room</button>
+      </div>
     </div>
   );
 }

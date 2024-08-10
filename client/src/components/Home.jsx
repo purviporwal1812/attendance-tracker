@@ -5,8 +5,9 @@ function Home() {
     <div>
       <h1>HOME</h1>
       <Link to="/users/login">LOGIN</Link>
-      <Link to="/mark-attendance">MARK ATTENDANCE</Link>
-      <Link to="/admin/dashboard">ADMIN DASHBOARD</Link>
+      <br></br>
+      <Link to="/mark-attendance">MARK ATTENDANCE</Link><br></br>
+      
     </div>
   );
 }

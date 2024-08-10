@@ -41,35 +41,26 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Rate limiter
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 1,
   message: "You have already marked your attendance for this hour.",
 });
 
-// Routes
 app.get("/", (req, res) => {
   res.send("Backend running");
 });
-
 
 app.get("/users/login", (req, res) => {
   res.send("Login Page");
 });
 
-
-
-app.get("/users/logout", (req, res) => {
-  req.logout();
-  res.redirect("/");
-});
 app.get("/admin/rooms", async (req, res) => {
   try {
     const roomsResult = await pool.query("SELECT * FROM room");
     res.json(roomsResult.rows);
   } catch (err) {
-    console.error("Err");
+    console.error("Error fetching rooms", err);
     res.status(500).send("Failed to fetch rooms.");
   }
 });
@@ -82,7 +73,7 @@ app.post("/admin/select-room", async (req, res) => {
     await pool.query("UPDATE room SET selected = TRUE WHERE id = $1", [roomId]);
     res.send("Room selected successfully");
   } catch (err) {
-    console.error("Err");
+    console.error("Error selecting room", err);
     res.status(500).send("Failed to select room. Please try again.");
   }
 });
@@ -119,9 +110,34 @@ app.post("/mark-attendance", limiter, async (req, res) => {
   }
 });
 
-app.get("/admin/dashboard", (req, res) => {
-  res.send("Admin Dashboard");
-});
+app.route("/admin/dashboard")
+  .get(async (req, res) => {
+    try {
+      const roomsResult = await pool.query("SELECT * FROM room");
+      res.json(roomsResult.rows);
+    } catch (err) {
+      console.error("Error fetching rooms", err.stack);
+      res.status(500).send("Failed to fetch rooms.");
+    }
+  })
+  .post(async (req, res) => {
+    const { name, minlat, maxlat, minlon, maxlon } = req.body;
+
+    if (!name || !minlat || !maxlat || !minlon || !maxlon) {
+      return res.status(400).send("All fields are required");
+    }
+
+    try {
+      const newRoom = await pool.query(
+        "INSERT INTO room (name, minlat, maxlat, minlon, maxlon, selected) VALUES ($1, $2, $3, $4, $5, FALSE) RETURNING *",
+        [name, parseFloat(minlat), parseFloat(maxlat), parseFloat(minlon), parseFloat(maxlon)]
+      );
+      res.json(newRoom.rows[0]); // Return the newly created room
+    } catch (err) {
+      console.error("Error adding room", err.stack);
+      res.status(500).send("Failed to add room. Please try again.");
+    }
+  });
 
 
 app.listen(PORT, () => {
