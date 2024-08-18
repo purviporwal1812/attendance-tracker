@@ -54,6 +54,10 @@ app.get("/", (req, res) => {
 app.get("/users/login", (req, res) => {
   res.send("Login Page");
 });
+app.post("/users/login", passport.authenticate("local", {
+  successRedirect: "/admin/rooms", 
+  failureRedirect: "/users/login", 
+}));
 
 app.get("/admin/rooms", async (req, res) => {
   try {
