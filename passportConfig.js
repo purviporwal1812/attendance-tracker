@@ -1,5 +1,7 @@
+
 const LocalStrategy = require("passport-local").Strategy;
 const { Pool } = require("pg");
+const bcrypt = require("bcrypt"); 
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -12,44 +14,47 @@ const pool = new Pool({
 function initialize(passport) {
   const authenticateUser = async (email, password, done) => {
     try {
-
+      // Query to find the user by email
       const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+      
       if (rows.length > 0) {
         const user = rows[0];
 
-        const isValidPassword = password === user.password;
+        // Compare the provided password with the hashed password stored in the database
+        const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (isValidPassword) {
           return done(null, user); 
         } else {
-          return done(null, false, { message: "Incorrect password" });
+          return done(null, false, { message: "Incorrect password" }); // Invalid password
         }
       } else {
-        return done(null, false, { message: "No user with that email" });
+        return done(null, false, { message: "No user with that email" }); // User not found
       }
     } catch (err) {
       console.error("Error during authentication:", err);
-      return done(err);
+      return done(err); 
     }
   };
 
   passport.use(new LocalStrategy({ usernameField: "email" }, authenticateUser));
 
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user.id); 
   });
 
   passport.deserializeUser(async (id, done) => {
     try {
       const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+      
       if (rows.length > 0) {
-        done(null, rows[0]);
+        done(null, rows[0]); 
       } else {
-        done(new Error("User not found"));
+        done(new Error("User not found")); 
       }
     } catch (err) {
       console.error("Error during deserialization:", err);
-      done(err);
+      done(err); 
     }
   });
 }

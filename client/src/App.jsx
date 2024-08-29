@@ -3,6 +3,7 @@ import MarkAttendance from "./components/MarkAttendance";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import Register from "./components/Register";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/users/login" element={<Login />} />
         <Route path="/mark-attendance" element={<MarkAttendance />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/users/register" element={<Register />} />
       </Routes>
     </Router>
   );

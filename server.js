@@ -1,14 +1,18 @@
+// server.js
+
 const express = require("express");
 const { Pool } = require("pg");
 const passport = require("passport");
 const session = require("express-session");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// PostgreSQL connection pool
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -17,16 +21,17 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
+// Passport configuration
 const initializePassport = require("./passportConfig");
 initializePassport(passport);
 
-// Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5173", // Adjust as needed
     credentials: true,
   })
 );
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -41,8 +46,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Rate limiter to prevent multiple attendance submissions within the same hour
 const limiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
+  windowMs: 60 * 60 * 1000, // 1 hour
   max: 1,
   message: "You have already marked your attendance for this hour.",
 });
@@ -54,10 +60,45 @@ app.get("/", (req, res) => {
 app.get("/users/login", (req, res) => {
   res.send("Login Page");
 });
-app.post("/users/login", passport.authenticate("local", {
-  successRedirect: "/admin/rooms", 
-  failureRedirect: "/users/login", 
-}));
+
+app.get("/users/register", (req, res) => {
+  res.send("Register Page");
+});
+
+app.post("/users/register", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const existingUser = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ message: "User with this email already exists." });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await pool.query(
+      "INSERT INTO users (email, password) VALUES ($1, $2)",
+      [email, hashedPassword]
+    );
+
+    res.status(201).json({ message: "User registered successfully." });
+  } catch (err) {
+    console.error("Error during registration:", err);
+    res.status(500).json({ message: "Failed to register user. Please try again." });
+  }
+});
+
+app.post("/users/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) return res.status(400).json({ message: info.message });
+
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+      return res.json({ message: "Login successful", user });
+    });
+  })(req, res, next);
+});
 
 app.get("/admin/rooms", async (req, res) => {
   try {
@@ -106,7 +147,7 @@ app.post("/mark-attendance", limiter, async (req, res) => {
       );
       res.send(`Attendance marked successfully for : ${name}`);
     } else {
-      res.send("Failed to mark attendance. You are not in the selected room.");
+      res.status(400).send("Failed to mark attendance. You are not in the selected room.");
     }
   } catch (err) {
     console.error("Error marking attendance", err.stack);
@@ -142,7 +183,6 @@ app.route("/admin/dashboard")
       res.status(500).send("Failed to add room. Please try again.");
     }
   });
-
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -4,9 +4,9 @@ function Home() {
   return (
     <div>
       <h1>HOME</h1>
-      <Link to="/users/login">LOGIN</Link>
+      <Link to="/users/login">User LOGIN</Link>
       <br></br>
-      <Link to="/mark-attendance">MARK ATTENDANCE</Link><br></br>
+      <Link to="/admin/dashboard">Admin Dashboard</Link><br></br>
       
     </div>
   );
