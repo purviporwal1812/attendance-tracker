@@ -7,8 +7,14 @@ CREATE TABLE attendance (
     timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-select * from attendance;
 CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    phone_number INT,
+    name VARCHAR(100) NOT NULL
+);
+CREATE TABLE admin (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,

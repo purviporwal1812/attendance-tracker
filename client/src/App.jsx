@@ -1,24 +1,14 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import MarkAttendance from "./components/MarkAttendance";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Dashboard from "./components/Dashboard";
-import Register from "./components/Register";
-import AdminLogin from "./components/AdminLogin";
-
+import React from "react";
+import { Link } from "react-router-dom";
+import "./App.css"; 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/users/login" element={<Login />} />
-        <Route path="/mark-attendance" element={<MarkAttendance />} />
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-        <Route path="/users/register" element={<Register />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-      </Routes>
-    </Router>
-  );
+  return <>
+  <div className="home-container">
+      <h1>HOME</h1>
+      <Link to="/users/login">User LOGIN</Link>
+      <Link to="/admin/login">Admin Login</Link>
+    </div>
+    </>
 }
 
 export default App;

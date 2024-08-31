@@ -1,5 +1,3 @@
-// server.js
-
 const express = require("express");
 const { Pool } = require("pg");
 const passport = require("passport");
@@ -22,6 +20,7 @@ const pool = new Pool({
 
 const initializePassport = require("./passportConfig");
 initializePassport(passport);
+
 const initializePassportAdmin = require("./passportConfigAdmin");
 initializePassportAdmin(passport);
 
@@ -54,17 +53,6 @@ const limiter = rateLimit({
 
 app.get("/", (req, res) => {
   res.send("Backend running");
-});
-
-app.get("/users/login", (req, res) => {
-  res.send("Login Page");
-});
-app.get("/admin/login", (req, res) => {
-  res.send("Login Page for Admin");
-});
-
-app.get("/users/register", (req, res) => {
-  res.send("Register Page");
 });
 
 app.post("/users/register", async (req, res) => {
@@ -168,8 +156,7 @@ app.post("/mark-attendance", limiter, async (req, res) => {
   }
 });
 
-app.route("/admin/dashboard")
-  .get(async (req, res) => {
+app.get("/admin/dashboard" , async (req, res) => {
     try {
       const roomsResult = await pool.query("SELECT * FROM room");
       res.json(roomsResult.rows);
@@ -178,7 +165,8 @@ app.route("/admin/dashboard")
       res.status(500).send("Failed to fetch rooms.");
     }
   })
-  .post(async (req, res) => {
+
+app.post("/admin/dashboard" , async (req, res) => {
     const { name, minlat, maxlat, minlon, maxlon } = req.body;
 
     if (!name || !minlat || !maxlat || !minlon || !maxlon) {
@@ -190,7 +178,7 @@ app.route("/admin/dashboard")
         "INSERT INTO room (name, minlat, maxlat, minlon, maxlon, selected) VALUES ($1, $2, $3, $4, $5, FALSE) RETURNING *",
         [name, parseFloat(minlat), parseFloat(maxlat), parseFloat(minlon), parseFloat(maxlon)]
       );
-      res.json(newRoom.rows[0]); // Return the newly created room
+      res.json(newRoom.rows[0]); 
     } catch (err) {
       console.error("Error adding room", err.stack);
       res.status(500).send("Failed to add room. Please try again.");
