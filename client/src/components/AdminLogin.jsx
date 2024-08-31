@@ -1,10 +1,10 @@
 
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/Login.css";
 
-function Login() {
+function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,13 +15,13 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/users/login",
+        "http://localhost:5000/admin/login",
         { email, password },
         { withCredentials: true }
       );
 
       if (response.status === 200) {
-        navigate("/mark-attendance");
+        navigate("/admin/dashboard");
       }
     } catch (error) {
       setError("Login failed. Please check your credentials.");
@@ -35,7 +35,7 @@ function Login() {
         <div className="logo">
           <img src="/profile.jpg" alt="Logo" />
         </div>
-        <div className="name">Login</div>
+        <div className="name">Admin Login</div>
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-field">
@@ -61,13 +61,11 @@ function Login() {
           <button className="btn" type="submit">
             Login
           </button>
-          <div className="text-center mt-3">
-            <Link to="/users/register">New User?</Link>
-          </div>
+       
         </form>
       </div>
     </div>
   );
 }
 
-export default Login;
+export default AdminLogin;

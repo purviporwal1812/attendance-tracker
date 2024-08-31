@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Register from "./components/Register";
+import AdminLogin from "./components/AdminLogin";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/mark-attendance" element={<MarkAttendance />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/users/register" element={<Register />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
       </Routes>
     </Router>
   );

@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import "./styles/Register.css";
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -17,6 +17,7 @@ const Register = () => {
       const response = await axios.post('http://localhost:5000/users/register', {
         email,
         password,
+        phone_number: phoneNumber,
       });
 
       if (response.status === 201) {
@@ -30,31 +31,51 @@ const Register = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleSubmit} style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' }}>
-        <h2>Register</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <div>
-          <label>Email:</label>
+    <div className="wrapper">
+      <div className="logo">
+        <img src="/profile.jpg" alt="Logo" />
+      </div>
+      <div className="name">
+        Register
+      </div>
+      <form onSubmit={handleSubmit}>
+        {error && <p className="error">{error}</p>}
+        
+        <div className="form-field">
           <input
             type="email"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
-        <div>
-          <label>Password:</label>
+        
+        <div className="form-field">
+          <input
+            type="text"
+            placeholder="Phone Number"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            required
+          />
+        </div>
+        
+        <div className="form-field">
           <input
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <button type="submit" >Register</button>
-        <Link to="/users/login" ><p>Already Registered?</p></Link>
+        
+        <button type="submit" className="btn">Register</button>
       </form>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Link to="/users/login">Already Registered?</Link>
+      </div>
     </div>
   );
 };

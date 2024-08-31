@@ -12,7 +12,6 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// PostgreSQL connection pool
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -21,13 +20,14 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-// Passport configuration
 const initializePassport = require("./passportConfig");
 initializePassport(passport);
+const initializePassportAdmin = require("./passportConfigAdmin");
+initializePassportAdmin(passport);
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Adjust as needed
+    origin: "http://localhost:5173", 
     credentials: true,
   })
 );
@@ -46,9 +46,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Rate limiter to prevent multiple attendance submissions within the same hour
 const limiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 60 * 60 * 1000, 
   max: 1,
   message: "You have already marked your attendance for this hour.",
 });
@@ -60,13 +59,16 @@ app.get("/", (req, res) => {
 app.get("/users/login", (req, res) => {
   res.send("Login Page");
 });
+app.get("/admin/login", (req, res) => {
+  res.send("Login Page for Admin");
+});
 
 app.get("/users/register", (req, res) => {
   res.send("Register Page");
 });
 
 app.post("/users/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password , phone_number } = req.body;
 
   try {
     const existingUser = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
@@ -77,8 +79,8 @@ app.post("/users/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await pool.query(
-      "INSERT INTO users (email, password) VALUES ($1, $2)",
-      [email, hashedPassword]
+      "INSERT INTO users (email, password,phone_number) VALUES ($1, $2,$3)",
+      [email, hashedPassword,phone_number]
     );
 
     res.status(201).json({ message: "User registered successfully." });
@@ -96,6 +98,17 @@ app.post("/users/login", (req, res, next) => {
     req.logIn(user, (err) => {
       if (err) return next(err);
       return res.json({ message: "Login successful", user });
+    });
+  })(req, res, next);
+});
+app.post("/admin/login", (req, res, next) => {
+  passport.authenticate("admin-local", (err, admin, info) => {
+    if (err) return next(err);
+    if (!admin) return res.status(400).json({ message: info.message });
+
+    req.logIn(admin, (err) => {
+      if (err) return next(err);
+      return res.json({ message: "Login successful", admin });
     });
   })(req, res, next);
 });

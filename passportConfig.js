@@ -14,13 +14,11 @@ const pool = new Pool({
 function initialize(passport) {
   const authenticateUser = async (email, password, done) => {
     try {
-      // Query to find the user by email
       const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
       
       if (rows.length > 0) {
         const user = rows[0];
 
-        // Compare the provided password with the hashed password stored in the database
         const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (isValidPassword) {
