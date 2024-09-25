@@ -14,7 +14,7 @@ function AdminLogin() {
 
     try {
       const response = await axios.post(
-        "http://sdl-back.vercel.app/admin/login",
+        "https://sdl-back.vercel.app/admin/login",
         { email, password },
         { withCredentials: true }
       );
