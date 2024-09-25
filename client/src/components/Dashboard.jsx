@@ -17,7 +17,7 @@ function Dashboard() {
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/admin/dashboard");
+      const response = await axios.get("https://sdl-back.vercel.app/admin/dashboard");
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms", error);
@@ -26,7 +26,7 @@ function Dashboard() {
 
   const handleAddRoom = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/admin/dashboard", newRoom);
+      const response = await axios.post("https://sdl-back.vercel.app/admin/dashboard", newRoom);
       setRooms([...rooms, response.data]); 
       setNewRoom({
         name: "",
@@ -43,7 +43,7 @@ function Dashboard() {
 
   const handleRoomSelection = async (roomId) => {
     try {
-      await axios.post("http://localhost:5000/admin/select-room", { roomId });
+      await axios.post("https://sdl-back.vercel.app/admin/select-room", { roomId });
       fetchRooms(); 
       alert("Room selected successfully");
     } catch (error) {

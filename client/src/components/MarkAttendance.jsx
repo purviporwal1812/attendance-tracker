@@ -16,7 +16,7 @@ function MarkAttendance() {
 
           try {
             const response = await axios.post(
-              "http://localhost:5000/mark-attendance",
+              "https://sdl-back.vercel.app/mark-attendance",
               {
                 name,
                 rollNumber,

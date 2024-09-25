@@ -14,7 +14,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/users/register', {
+      const response = await axios.post('https://sdl-back.vercel.app/users/register', {
         email,
         password,
         phone_number: phoneNumber,
