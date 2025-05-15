@@ -1,0 +1,135 @@
+.register-page {
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .hero-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40vh;
+    padding-top: 4rem;
+    overflow: visible;
+    background: var(--bg-color);
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    opacity: 0.2;
+    z-index: 0;
+  }
+  
+  .hero-text {
+    text-align: center;
+    padding: 2rem;
+    z-index: 1;
+  }
+  
+  .hero-text p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  
+  .form-section {
+    flex: 1;
+    background-color: var(--bg-color);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .webcam-feed {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+  }
+  
+  .btn {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition);
+    margin-bottom: 1rem;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+  
+  .form-field {
+    position: relative;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .form-field input {
+    width: 100%;
+    padding: 1rem 0.75rem;
+    background: transparent;
+    border: 2px solid var(--primary);
+    border-radius: 0.5rem;
+    color: var(--text-color);
+    font-size: 1rem;
+    outline: none;
+  }
+  
+  .form-field label {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    transform: translateY(-50%);
+    background-color: var(--bg-color);
+    padding: 0 0.25rem;
+    color: var(--primary);
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: 0.2s;
+  }
+  
+  .form-field input:focus + label,
+  .form-field input:not(:placeholder-shown) + label {
+    top: -0.6rem;
+    left: 0.5rem;
+    background: var(--bg-color);
+    font-size: 0.75rem;
+    color: var(--secondary);
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+  
+  .links-row {
+    margin-top: 2rem;
+    display: flex;
+    gap: 2rem;
+    font-size: 0.9rem;
+  }
+  
+  .links-row a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  
+  .links-row a:hover {
+    text-decoration: underline;
+  }
+  
