@@ -13,8 +13,6 @@
 - [⚙️ Usage](#-usage)
 - [🔒 Security & Authentication](#-security--authentication)
 - [🤝 Contributing](#-contributing)
-- [📝 License](#-license)
-- [📬 Contact](#-contact)
 
 ---
 
@@ -28,9 +26,9 @@ An attendance tracking application built for modern classrooms and offices. User
 
 | Frontend                  | Backend                  | Other Integrations   |
 |---------------------------|--------------------------|----------------------|
-| React.js (Vite)           | Node.js + Express        | PostgreSQL           |
-| Tailwind CSS              | Passport.js              | Face-api.js          |
-| React Router              | Bcrypt                   | Geolocation   |
+| React.js (Vite)           | Node.js + Express        | Mongodb              |
+| Websocket.io              | Passport.js              | Face-api.js          |
+| React Router              | Bcrypt                   | Geolocation          |
 
 ---
 
