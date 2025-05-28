@@ -37,8 +37,8 @@ An attendance tracking application built for modern classrooms and offices. User
 - 👤 **Biometric Login** — Face recognition–based login for users.
 - 📍 **Geolocation Validation** — Ensures attendance is marked only when physically present in a predefined location.
 - 🔐 **Admin Panel** — Manage rooms, locations, and monitor live attendance.
-- 🎨 **Theme Support** — Light and Dark mode preference stored in database.
-- 📊 **PostgreSQL Backend** — Secure and scalable session and data management.
+- 🎨 **Real Time dashboard** — Admin can view rt attendance, with the help of websocket full duplex connection.
+- 📊 **PMongoDB** — Secure and scalable session and data management.
 
 ---
 
@@ -47,7 +47,7 @@ An attendance tracking application built for modern classrooms and offices. User
 ### Prerequisites
 
 - Node.js v14+ & npm
-- PostgreSQL database
+- Mongo database
 
 ### Installation
 
@@ -73,7 +73,7 @@ An attendance tracking application built for modern classrooms and offices. User
 Create a `.env` file in the `backend/` folder with:
 ```ini
 PORT=5000
-POSTGRES_URL=postgres://user:password@localhost:5432/attendance_db
+MONGO_URL=mongodb+srv://username:<password>@<clustername>.f135jgd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 SESSION_SECRET=your_session_secret
 ``` 
 
